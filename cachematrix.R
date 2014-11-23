@@ -4,63 +4,39 @@
 ## a matrix and cache's its inverse.
 
 ## This function creates a special "matrix" object that can cache its inverse.
-
+## This special "matrix" is really a list containing a function to:
+## 1. set the value of the matrix ('get')
+## 2. get the value of the matrix ('set')
+## 3. set the value of the inverse of a matrix ('setinverse')
+## 4. set the value of the inverse of a matrix ('getinverse')
 makeCacheMatrix <- function(x = matrix()) {
-  
-  ## initialize 'inv'
   inv <- NULL
-  
-  ## set the value of the matrix
   set <- function(y) {
     x <<- y
-    ## if new matrix is set then erase the inverse value
     inv <<- NULL
   }
-  
-  ## get the value of the matrix
   get <- function() x
-  
-  ## set the value of the inverse of a matrix
   setinverse <- function(inverse) inv <<- inverse
-  
-  ## get the value of the inverse of a matrix
   getinverse <- function() inv
-  
-  ## return special "matrix"
   list(set = set, get = get,
        setinverse = setinverse,
        getinverse = getinverse)
 }
 
 ## This function computes the inverse of the special "matrix" returned 
-## by makeCacheMatrix above. If the inverse has already been calculated 
-## (and the matrix has not changed), then the cachesolve should retrieve 
-## the inverse from the cache.
-
+## by makeCacheMatrix above. 
+## It first checks to see if the inverse has already been calculated. 
+## If so, it gets the inverse from the cache and skips the computation. 
+## Otherwise, it calculates the inverse of the data and sets the value 
+## of the inverse in the cache via the 'setinverse' function.
 cacheSolve <- function(x, ...) {
-  
-  ## Return a matrix that is the inverse of 'x'
   inv <- x$getinverse()
-  
-  ## check if the inverse of a matrix has already been calculated
-  if(!is.null(inv)) {
-    
+  if(!is.null(inv)) {  
     message("getting cached inverse")
-    
-    ## if the inverse of a matrix was calculated then return cached value
-    ## and skip the computation
     return(inv)
   }
-  
-  ## if the inverse of a matrix is NULL then get matrix
   mtx <- x$get()
-  
-  ## and calculates the inverse 
   inv <- solve(mtx, ...)
-  
-  ## sets the value of the inverse in the cache
   x$setinverse(inv)
-  
-  ## return the inverse of a matrix
   inv
 }
